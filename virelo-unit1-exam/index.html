@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Virelo Academy — امتحان شامل: الوحدة الأولى (ICT)</title>
+<meta name="description" content="امتحان شامل على الوحدة الأولى — تكنولوجيا المعلومات والمجتمع — الصف الثاني الثانوي — Virelo Academy">
+<link rel="icon" href="assets/virelo-logo.png">
+<!-- خطوط العلامة التجارية (Cairo للعربية، Montserrat للإنجليزية) مُستضافة محليًا داخل
+     assets/fonts عبر css/style.css، ليعمل الامتحان حتى في شبكات المدارس التي تحجب
+     الاتصال بخوادم خارجية مثل Google Fonts. -->
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- زخرفة هندسية خلفية هادئة (خط ذهبي رفيع + علامة V شفافة) -->
+  <div class="bg-decor" aria-hidden="true">
+    <span class="bg-watermark">V</span>
+  </div>
+
+  <header class="app-header" id="appHeader">
+    <div class="brand">
+      <img src="assets/virelo-logo.png" alt="" class="brand-logo" id="brandLogo">
+      <div class="brand-text">
+        <span class="brand-name">VIRELO <b>ACADEMY</b></span>
+        <span class="brand-sub" id="headerSub">ICT — الصف الثاني الثانوي</span>
+      </div>
+    </div>
+    <div class="timer" id="timerBox" hidden>
+      <span class="timer-label">الوقت المتبقي</span>
+      <span class="timer-value" id="timerValue" aria-live="polite">60:00</span>
+    </div>
+  </header>
+
+  <main id="app">
+
+    <!-- ============ 1) شاشة التسجيل ============ -->
+    <section class="screen active" id="screen-register" aria-labelledby="registerTitle">
+      <div class="card auth-card">
+        <p class="eyebrow">امتحان رسمي</p>
+        <h1 id="registerTitle">امتحان شامل — الوحدة الأولى</h1>
+        <p class="subtitle">ICT — الصف الثاني الثانوي</p>
+
+        <form id="registerForm" novalidate>
+          <div class="field">
+            <label for="studentName">الاسم الثلاثي</label>
+            <input type="text" id="studentName" name="studentName" autocomplete="name"
+                   placeholder="مثال: أحمد محمد علي" required>
+            <p class="field-error" id="nameError" role="alert"></p>
+          </div>
+
+          <div class="field">
+            <label for="studentPhone">رقم الهاتف</label>
+            <input type="tel" id="studentPhone" name="studentPhone" autocomplete="tel"
+                   placeholder="01xxxxxxxxx" inputmode="numeric" required>
+            <p class="field-error" id="phoneError" role="alert"></p>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">ابدأ الامتحان</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============ 2) شاشة التعليمات ============ -->
+    <section class="screen" id="screen-instructions" hidden aria-labelledby="instrTitle">
+      <div class="card instr-card">
+        <p class="eyebrow">قبل البدء</p>
+        <h2 id="instrTitle">تعليمات الامتحان</h2>
+        <ul class="instr-list">
+          <li>الامتحان يتكوّن من <b>50</b> سؤالًا.</li>
+          <li>اختر إجابة واحدة لكل سؤال.</li>
+          <li>اقرأ السؤال جيدًا قبل اختيار الإجابة.</li>
+          <li>يمكنك التنقل بين الأسئلة بحرية.</li>
+          <li>تأكد من مراجعة إجاباتك قبل التسليم.</li>
+          <li>بعد الضغط على «إنهاء الامتحان» لن يمكنك تعديل الإجابات.</li>
+        </ul>
+        <div class="instr-meta" id="instrMeta"></div>
+        <button type="button" class="btn btn-primary btn-block" id="startExamBtn">ابدأ الحل</button>
+      </div>
+    </section>
+
+    <!-- ============ 3) شاشة الامتحان ============ -->
+    <section class="screen" id="screen-exam" hidden aria-labelledby="examProgressLabel">
+      <div class="exam-layout">
+
+        <div class="exam-main">
+          <div class="progress-row">
+            <span class="progress-label" id="examProgressLabel">السؤال <b id="qIndex">1</b> من <b id="qTotal">50</b></span>
+            <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+          </div>
+
+          <div class="card question-card" id="questionCard">
+            <p class="q-number" id="qNumberBadge">السؤال 1</p>
+            <h2 class="q-text" id="qText"></h2>
+
+            <div class="options" id="optionsList" role="radiogroup" aria-labelledby="qText"></div>
+          </div>
+
+          <div class="exam-actions">
+            <button type="button" class="btn btn-ghost" id="prevBtn">السابق</button>
+            <button type="button" class="btn btn-primary" id="nextBtn">التالي</button>
+            <button type="button" class="btn btn-gold" id="finishBtn" hidden>إنهاء الامتحان</button>
+          </div>
+        </div>
+
+        <aside class="exam-nav" aria-label="التنقل بين الأسئلة">
+          <p class="nav-title">أسئلة الامتحان</p>
+          <div class="nav-grid" id="navGrid"></div>
+          <div class="nav-legend">
+            <span><i class="dot dot-unanswered"></i> بدون إجابة</span>
+            <span><i class="dot dot-answered"></i> تمت الإجابة</span>
+            <span><i class="dot dot-current"></i> السؤال الحالي</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============ 4) شاشة النتيجة ============ -->
+    <section class="screen" id="screen-result" hidden aria-labelledby="resultTitle">
+      <div class="card result-card">
+        <img src="assets/virelo-logo.png" alt="" class="result-logo">
+        <p class="eyebrow" id="resultEyebrow">انتهى الامتحان</p>
+        <h2 id="resultStudentName"></h2>
+
+        <div class="score-circle" id="scoreCircle">
+          <span class="score-frac" id="scoreFrac">0 / 50</span>
+          <span class="score-pct" id="scorePct">0%</span>
+        </div>
+
+        <p class="result-message" id="resultMessage"></p>
+
+        <div class="result-stats">
+          <div class="stat"><span class="stat-num" id="statCorrect">0</span><span class="stat-label">إجابات صحيحة</span></div>
+          <div class="stat"><span class="stat-num" id="statWrong">0</span><span class="stat-label">إجابات خاطئة</span></div>
+          <div class="stat"><span class="stat-num" id="statUnanswered">0</span><span class="stat-label">بدون إجابة</span></div>
+          <div class="stat"><span class="stat-num" id="statDuration">00:00</span><span class="stat-label">الزمن المستغرق</span></div>
+        </div>
+
+        <p class="save-status" id="saveStatus" aria-live="polite"></p>
+        <button type="button" class="btn btn-ghost btn-block" id="retrySaveBtn" hidden>إعادة محاولة الحفظ</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ نافذة تأكيد الإنهاء ============ -->
+  <div class="modal-overlay" id="modalConfirm" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalConfirmTitle">
+      <h3 id="modalConfirmTitle">هل أنت متأكد من إنهاء الامتحان؟</h3>
+      <p>لمراجعة الإجابات اضغط «العودة للمراجعة».</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="backToReviewBtn">العودة للمراجعة</button>
+        <button type="button" class="btn btn-gold" id="confirmFinishBtn">إنهاء الامتحان</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ نافذة الأسئلة بدون إجابة ============ -->
+  <div class="modal-overlay" id="modalUnanswered" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalUnansweredTitle">
+      <h3 id="modalUnansweredTitle">لديك <span id="unansweredCount">0</span> أسئلة بدون إجابة.</h3>
+      <p>هل تريد مراجعتها قبل إنهاء الامتحان؟</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="reviewUnansweredBtn">مراجعة الأسئلة</button>
+        <button type="button" class="btn btn-gold" id="finishAnywayBtn">إنهاء الامتحان</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ تنبيه عام (Toast) ============ -->
+  <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/questions.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
